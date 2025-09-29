@@ -1,4 +1,4 @@
-USE `flight_management`;
+DROP TABLE IF EXISTS `Flights9999`;
 DROP TABLE IF EXISTS `Delay9999`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */
 ;
@@ -19,20 +19,20 @@ LOCK TABLES `Delay9999` WRITE;
 ;
 INSERT INTO `Delay9999`
 VALUES (1, 'Air Traffic Control'),
-    (2, 'Weather'),
-    (3, 'Late Arrival of Aircraft'),
-    (4, 'Maintenance'),
-    (5, 'Crew Availability'),
-    (6, 'Security Clearance'),
-    (7, 'Baggage Handling Delay'),
-    (8, 'Fueling Delay'),
-    (9, 'Ground Operations'),
-    (10, 'Airline Scheduling / Logistics'),
-    (11, 'Documentation Issues'),
-    (12, 'Equipment Malfunction'),
-    (13, 'Passenger-related Delay'),
-    (14, 'Runway Congestion'),
-    (15, 'Miscellaneous / Other');
+(2, 'Weather'),
+(3, 'Late Arrival of Aircraft'),
+(4, 'Maintenance'),
+(5, 'Crew Availability'),
+(6, 'Security Clearance'),
+(7, 'Baggage Handling Delay'),
+(8, 'Fueling Delay'),
+(9, 'Ground Operations'),
+(10, 'Airline Scheduling / Logistics'),
+(11, 'Documentation Issues'),
+(12, 'Equipment Malfunction'),
+(13, 'Passenger-related Delay'),
+(14, 'Runway Congestion'),
+(15, 'Miscellaneous / Other');
 /*!40000 ALTER TABLE `Delay9999` ENABLE KEYS */
 ;
 UNLOCK TABLES;
