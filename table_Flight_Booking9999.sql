@@ -1,3 +1,5 @@
+USE `flight_management`;
+
 DROP TABLE IF EXISTS `Flight_Booking9999`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */
 ;
