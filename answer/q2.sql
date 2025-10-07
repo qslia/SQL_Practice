@@ -22,6 +22,6 @@ WHERE f.Scheduled_Departure_Date >= MAKEDATE(YEAR(CURDATE()), 1)
   AND f.Scheduled_Departure_Date <  MAKEDATE(YEAR(CURDATE()) + 1, 1)
 ORDER BY
   ac.Airline,
-  CAST(f.Flight_Number AS UNSIGNED),   -- numeric sort within airline
+-- CAST(f.Flight_Number AS UNSIGNED),   -- numeric sort within airline
   f.Flight_Number;                     -- fallback if alphanumeric
 
