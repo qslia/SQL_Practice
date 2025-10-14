@@ -60,3 +60,103 @@ to check if the gap between the current and previous request is ≤ 24 hours.
 ---
 
 Would you like me to **draw a sample table** showing the before/after effect of applying `LAG()` to your Confirmations example?
+
+<br><br><br>
+
+
+Excellent follow-up 🙌
+
+In SQL, the keyword **`OVER`** is used together with **window functions** (also called *analytic functions*) like `RANK()`, `DENSE_RANK()`, `ROW_NUMBER()`, `SUM()`, `AVG()`, etc.
+
+---
+
+### 🧩 Syntax
+
+```sql
+function_name() OVER (
+    [PARTITION BY column_name]
+    [ORDER BY column_name]
+)
+```
+
+The **`OVER`** clause defines **how** the window function operates — which rows it can "see" and use to calculate its result.
+
+---
+
+### 🧠 Example: Using `RANK() OVER`
+
+Let’s say we have this table:
+
+| team_name | points |
+| --------- | ------ |
+| A         | 20     |
+| B         | 18     |
+| C         | 20     |
+
+Now, run:
+
+```sql
+SELECT 
+  team_name,
+  points,
+  RANK() OVER (ORDER BY points DESC) AS position
+FROM Teams;
+```
+
+**What happens:**
+
+* The `OVER` clause tells MySQL to order rows by `points DESC` (highest first).
+* The `RANK()` function then assigns a rank **within that ordered set**.
+
+✅ **Result:**
+
+| team_name | points | position |
+| --------- | ------ | -------- |
+| A         | 20     | 1        |
+| C         | 20     | 1        |
+| B         | 18     | 3        |
+
+Here:
+
+* Both A and C have 20 points → same rank (1)
+* The next team (B) gets rank 3 (since two teams are ahead).
+
+---
+
+### ⚙️ Example with `PARTITION BY`
+
+If you add a **`PARTITION BY`**, it resets the ranking for each group.
+
+```sql
+SELECT 
+  department,
+  employee,
+  RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS salary_rank
+FROM Employees;
+```
+
+Here:
+
+* Each department gets its **own** ranking (ranking restarts at 1 per department).
+
+---
+
+### 💡 In your football query
+
+```sql
+RANK() OVER (ORDER BY points DESC)
+```
+
+means:
+
+> “Rank all teams based on points, highest first.
+> If teams have equal points, give them the same rank.”
+
+---
+
+✅ **So in short:**
+
+* `RANK()` → gives a rank number.
+* `OVER()` → defines **how** to rank (ordering and grouping).
+* It’s like saying: “Do this ranking within the window defined by `OVER`.”
+
