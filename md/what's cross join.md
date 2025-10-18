@@ -103,4 +103,89 @@ Then you just filter out the invalid ones (same ID or same name).
 ---
 
 Would you like me to make a **visual diagram/table** that shows how the Cartesian product expands step by step for your three schools?
+<br><br><br>
+
+✅ Yes — **MySQL absolutely allows `FROM` with two (or more) tables**.
+
+Let’s go step by step so you fully understand what’s happening when you write:
+
+```sql
+FROM FriendRequest, RequestAccepted;
+```
+
+---
+
+### 🧩 1. What it actually means
+
+When you list **multiple tables** in a `FROM` clause separated by commas, like:
+
+```sql
+FROM table1, table2
+```
+
+MySQL interprets it as a **CROSS JOIN** — that is, every row from `table1` is paired with **every** row from `table2`.
+
+👉 So it’s equivalent to:
+
+```sql
+FROM table1 CROSS JOIN table2
+```
+
+If `table1` has 5 rows and `table2` has 10 rows, the result set will have `5 × 10 = 50` rows.
+
+---
+
+### 🧮 2. Why it’s okay in your query
+
+In your query, you’re doing this:
+
+```sql
+SELECT 
+    ROUND(
+        IFNULL(
+            COUNT(DISTINCT requester_id, accepter_id) / COUNT(DISTINCT sender_id, send_to_id),
+            0
+        ),
+        2
+    ) AS accept_rate
+FROM FriendRequest, RequestAccepted;
+```
+
+That’s fine because:
+
+* You’re **not selecting individual rows** from the combined data.
+* You’re **using aggregate functions** (`COUNT`) over the entire dataset.
+* The *cross join effect* doesn’t change the result — since you’re counting **distinct pairs**, the duplication caused by the cross join doesn’t matter (MySQL will still correctly count the distinct `(requester_id, accepter_id)` pairs).
+
+✅ So yes — this syntax is **valid** and works as intended in this specific case.
+
+---
+
+### ⚠️ 3. When it’s *not* recommended
+
+In general, you should **avoid listing multiple tables without a `JOIN` condition** unless:
+
+* You **really** want a cross join, or
+* You’re doing **independent aggregations** (like here).
+
+For example, this can cause an explosion in rows if you try to select columns directly:
+
+```sql
+SELECT * FROM FriendRequest, RequestAccepted;  -- ⚠️ Could return millions of rows!
+```
+
+So — it’s valid syntax, but you should use it **only intentionally**.
+
+---
+
+### ✅ Summary
+
+| Statement                             | Meaning                        | Allowed in MySQL? |
+| ------------------------------------- | ------------------------------ | ----------------- |
+| `FROM table1, table2`                 | Cross join (Cartesian product) | ✅ Yes             |
+| `FROM table1 JOIN table2 ON ...`      | Inner join                     | ✅ Yes             |
+| `FROM table1 LEFT JOIN table2 ON ...` | Left join                      | ✅ Yes             |
+
+✔️ In your case, `FROM FriendRequest, RequestAccepted` is **perfectly fine and valid SQL**.
+
 
