@@ -14,3 +14,8 @@
 2339. # cross join
 2356. # group by
 2377. # order by
+2504. # concat
+2668. # group by multiple columns
+2853. # case when end
+2987. # having
+3051. # having
