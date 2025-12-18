@@ -51,3 +51,147 @@ which gives you the **email domain** — for example:
 So the `-1` tells MySQL:
 
 > "Take the substring **after the last occurrence** of the delimiter."
+
+<br>
+
+
+Good follow-up. Think of SQL as having a **logical execution sequence** (not the order you write it).
+
+For your query, the sequence is:
+
+---
+
+## Logical execution order of SQL
+
+1️⃣ **FROM**
+
+```sql
+FROM Emails
+```
+
+→ SQL loads rows from the `Emails` table.
+
+---
+
+2️⃣ **WHERE**
+
+```sql
+WHERE email LIKE '%.com'
+```
+
+→ Filters rows **before grouping**
+Only `.com` emails remain.
+
+---
+
+3️⃣ **GROUP BY**
+
+```sql
+GROUP BY email_domain
+```
+
+→ Rows are **grouped by domain**
+All rows with the same `split_part(email, '@', 2)` are put into one group.
+
+Example groups:
+
+```
+gmail.com  → [a@gmail.com, b@gmail.com]
+yahoo.com  → [c@yahoo.com]
+```
+
+---
+
+4️⃣ **Aggregate functions**
+
+```sql
+COUNT(*)
+```
+
+→ Runs **once per group**
+Counts how many rows are in each domain group.
+
+---
+
+5️⃣ **SELECT**
+
+```sql
+SELECT
+    split_part(email, '@', 2) AS email_domain,
+    COUNT(*) AS count
+```
+
+→ Produces **one output row per group**
+
+---
+
+6️⃣ **ORDER BY**
+
+```sql
+ORDER BY email_domain
+```
+
+→ Sorts the final result set.
+
+---
+
+## Why `GROUP BY email` breaks it
+
+If you group by `email`, step 3 becomes:
+
+```
+a@gmail.com → [a@gmail.com]
+b@gmail.com → [b@gmail.com]
+```
+
+So:
+
+* Each group has **1 row**
+* `COUNT(*)` is always `1`
+* Domains never get merged
+
+---
+
+## Logical vs written order (important)
+
+### Written order
+
+```sql
+SELECT
+FROM
+WHERE
+GROUP BY
+ORDER BY
+```
+
+### Actual execution order
+
+```
+FROM
+→ WHERE
+→ GROUP BY
+→ AGGREGATES
+→ SELECT
+→ ORDER BY
+```
+
+This is why:
+
+* `WHERE` can’t use aggregate functions
+* `SELECT` aliases **can** be used in `ORDER BY`
+* `GROUP BY` defines what “one row” means
+
+---
+
+## One-line takeaway
+
+> **GROUP BY decides what “one row” represents; SELECT just formats it.**
+
+If you want, next I can explain:
+
+* `HAVING` vs `WHERE`
+* why aliases work in `ORDER BY` but not `WHERE`
+* how SQL optimizers change the physical execution
+
+Just say 👍
+
