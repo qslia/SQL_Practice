@@ -1,15 +1,10 @@
-import os
-from sqlalchemy import create_engine, Column, String, Integer
-from sqlalchemy.orm import declarative_base
+from model import User, engine
+from sqlalchemy.orm import sessionmaker
 
-db_url = os.getenv("DATABASE_URL", "mysql+pymysql://root:123@localhost:3306/sqlAlchemyPracticeDb")
-engine = create_engine(db_url)
-Base = declarative_base()
+Session = sessionmaker(bind=engine)
+session = Session()
 
-class User(Base):
-    __tablename__ = "users"
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50))
-    age = Column(Integer)
-    
-Base.metadata.create_all(engine)
+user = User(name="John Doe", age=30)
+session.add(user)
+session.commit()
+
