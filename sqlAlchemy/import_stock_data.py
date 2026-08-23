@@ -159,6 +159,10 @@ class StockDataImporter:
         :param skip_existing: 是否跳过已存在的记录
         """
         import glob
+        # 清理所有连接
+        self.engine.dispose()  # 关闭池中所有连接
+        # 或者重置池
+        self.engine.pool.reset()
         
         files = sorted(glob.glob(file_pattern))
         total_imported = 0
@@ -185,7 +189,7 @@ if __name__ == "__main__":
     importer = StockDataImporter(db_url, batch_size=2000)
     
     # 导入单个文件
-    # importer.import_data(r'sqlAlchemy\data\20260420.csv')
+    # importer.import_data(r'sqlAlchemy\data\20260428.csv')
     
     # 或者批量导入
     importer.import_multiple_files(r'sqlAlchemy\data\2026*.csv')
